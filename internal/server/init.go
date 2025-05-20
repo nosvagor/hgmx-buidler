@@ -21,7 +21,7 @@ func New(cfg Config) *http.Server {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,
-		Handler:      NewRouter(),
+		// Handler:      NewRouter(),
 	}
 
 	return server

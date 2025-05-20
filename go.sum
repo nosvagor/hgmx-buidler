@@ -1,0 +1,6 @@
+github.com/a-h/templ v0.3.865 h1:nYn5EWm9EiXaDgWcMQaKiKvrydqgxDUtT1+4zU2C43A=
+github.com/a-h/templ v0.3.865/go.mod h1:oLBbZVQ6//Q6zpvSMPTuBK0F3qOtBdFBcGRspcT+VNQ=
+github.com/alltom/oklab v1.0.0 h1:TxsmxioepyOiIAdmXr78IMDSwX3DT/NyS/8W4lsI+T0=
+github.com/alltom/oklab v1.0.0/go.mod h1:QLQU/O6ibHXsj7WKCt8VRs5+lpPWlZzh/5mURqoB5Vw=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
