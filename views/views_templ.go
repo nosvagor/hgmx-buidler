@@ -368,14 +368,12 @@ func getFileHash(filePath string) string {
 	fullPath := filepath.Join("views/static", filePath)
 	file, err := os.Open(fullPath)
 	if err != nil {
-		fmt.Println(err)
-		hash = ""
+		panic(err)
 	} else {
 		defer file.Close()
 		hashMD5 := md5.New()
 		if _, err := io.Copy(hashMD5, file); err != nil {
-			fmt.Println(err)
-			hash = ""
+			panic(err)
 		} else {
 			hash = fmt.Sprintf("?v=%x", hashMD5.Sum(nil))
 		}
