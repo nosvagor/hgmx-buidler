@@ -19,7 +19,7 @@ func RegisterRoutes(e *echo.Echo) {
 }
 
 func RegisterStaticRoutes(e *echo.Echo) {
-	e.Static("/app/static", "static")
+	e.Static("/static", "views/static")
 
 	// Files
 	e.File("/favicon.ico", "static/favicon/favicon.ico")
