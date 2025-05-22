@@ -31,7 +31,7 @@ run *ARGS:
 tw:
     @tailwindcss -i {{CSS_INPUT}} -o {{CSS_OUTPUT}} --minify --watch
 
-r:
+watch:
     @air
 
 describe:
