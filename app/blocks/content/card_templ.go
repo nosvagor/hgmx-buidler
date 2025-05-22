@@ -1,1 +1,0 @@
-/Users/cullyn/hgmx/library/blocks/content/card_templ.go

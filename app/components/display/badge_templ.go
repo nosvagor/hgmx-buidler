@@ -1,1 +1,0 @@
-/Users/cullyn/hgmx/library/components/display/badge_templ.go
