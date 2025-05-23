@@ -29,7 +29,7 @@ run *ARGS:
     @go run {{MAIN_PACKAGE_PATH}} {{ARGS}}
 
 tw:
-    @tailwindcss -i {{CSS_INPUT}} -o {{CSS_OUTPUT}} --minify --watch
+    @tailwindcss -i {{CSS_INPUT}} -o {{CSS_OUTPUT}} --minify
 
 watch:
     @air
