@@ -3,13 +3,14 @@ package views
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/nosvagor/hgmx-builder/views/blocks/navigation"
 	"io"
 	"os"
 	"path/filepath"
 	"sync"
 )
 
-templ Full(content templ.Component) {
+templ Full(content templ.Component, navbar *navigation.NavbarProps) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -21,6 +22,7 @@ templ Full(content templ.Component) {
 			@Script("vendor/hyperscript.min.js", false)
 		</head>
 		<body>
+			@navigation.Navbar(navbar)
 			@content
 		</body>
 		@Footer()
@@ -28,13 +30,13 @@ templ Full(content templ.Component) {
 }
 
 templ Title(title string) {
-    if len(title) > 0 {
-        <title>{ title }</title>
-    }
+	if len(title) > 0 {
+		<title>{ title }</title>
+	}
 }
 
 templ Main(content templ.Component, title string) {
-    @Title(title)
+	@Title(title)
 	<main>
 		@content
 	</main>

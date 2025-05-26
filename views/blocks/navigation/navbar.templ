@@ -1,2 +1,305 @@
 package navigation
-templ Navbar() {}
+
+import "fmt"
+
+// === navbar ==================================================================
+
+type NavbarProps struct {
+	App     string
+	Links   []PageLink
+	CTA     PageLink
+	Account []PageLink
+}
+
+type PageLink struct {
+	Label string
+	URL   templ.SafeURL
+}
+
+// Navbar is the introductory navigation option.
+templ Navbar(p *NavbarProps) {
+	<navbar
+		role="navigation"
+		aria-label="Navigation Bar"
+		class="sticky top-0 z-50 items-center justify-between hidden gap-4 px-8 py-3 transition duration-200 ease-out md:flex"
+		_="
+			init
+				if window's scrollY is 0 then
+					send navbar:show_state to .scroll-reactor
+					add .bg-base-500 to me
+					remove .navbar-scrolled from me
+				else
+					send navbar:scrolled to .scroll-reactor
+					add .navbar-scrolled to me
+					add .bg-base-500 to me
+				end
+			end
+			on scroll from window
+				if not #account-dropdown.hidden then
+					set @aria-expanded of #account-dropdown.previousElementSibling to 'false'
+					add .hidden to #account-dropdown
+				end
+				
+				if window's scrollY is 0 then
+					send navbar:show_state to .scroll-reactor
+					remove .navbar-scrolled from me
+					add .bg-base-500 to me
+				else
+					send navbar:scrolled to .scroll-reactor
+					add .navbar-scrolled to me
+					remove .bg-base-500 from me
+				end
+			end
+		"
+	>
+		@navbarBrand(p)
+		<navbox class="flex items-center justify-end">
+			@navbarTelescope()
+			<quicklinks
+				class="flex items-center space-x-4"
+			>
+				@navbarBookmarks(p)
+				@navbarAccount(p)
+			</quicklinks>
+			@navbarCTA(p)
+		</navbox>
+	</navbar>
+	@Telescope(nil)
+}
+
+// === navbar components ===
+
+// NavbarBrand is the logo and name of the site, links to home page
+templ navbarBrand(p *NavbarProps) {
+	<navbarBrand class="text-lg font-semibold tracking-tight font-display">
+		<a href="/" aria-label="Home" class="transition-colors hover:text-accent-400">
+			{ p.App }
+		</a>
+	</navbarBrand>
+}
+
+// NavbarTelescope is the telescope/search box for the navbar
+templ navbarTelescope() {
+	<navbarTelescope
+		type="button"
+		role="button"
+		tabindex="0"
+		aria-label="Open telescope search"
+		aria-haspopup="dialog"
+		class="items-center hidden px-2 py-1 text-xs outline-none focus:text-primary-401 transition-colors border rounded-md shadow-inner cursor-pointer border-base-700 bg-base-600 sm:inline-flex text-secondary-601 hover:text-primary-401 mr-4 scroll-reactor"
+		_="
+			on navbar:scrolled set my.tabIndex to -1
+			on navbar:show_state set my.tabIndex to 0
+		"
+	>
+		<svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+			<rect x="6" y="9" width="8" height="4" rx="1" transform="rotate(-25 10 11)"></rect>
+			<rect x="2" y="12" width="3" height="2" rx="1" transform="rotate(-25 3.5 13)"></rect>
+			<rect x="15" y="6" width="4" height="6" rx="2" transform="rotate(-25 17 9)"></rect>
+			<rect x="8.5" y="14" width="1.5" height="6" rx="0.75" transform="rotate(20 9.25 17)"></rect>
+			<rect x="13" y="14" width="1.5" height="6" rx="0.75" transform="rotate(-20 13.75 17)"></rect>
+		</svg>
+		<kbd
+			_="
+				on load
+					if navigator.platform.toUpperCase().indexOf('MAC') >= 0
+						set my.textContent to '⌘K'
+					else
+						set my.textContent to 'Ctrl+K'
+					end
+				end
+				on click
+					halt the event
+					send telescope:open
+				end
+				on keydown[metaKey and key is 'k'] from window
+					halt the event
+					send telescope:open
+				end
+				on keydown[ctrlKey and key is 'k'] from window
+					halt the event
+					send telescope:open
+				end
+			"
+		>Ctrl+K</kbd>
+	</navbarTelescope>
+}
+
+// NavbarBookmarks are the core site pages included in navbar on larger screens
+templ navbarBookmarks(p *NavbarProps) {
+	<navbarBookmarks
+		role="list"
+		class="items-center hidden gap-3 font-medium scroll-reactor font-display md:flex"
+		_="
+			on navbar:scrolled 
+				add .navbar-collapse to me
+				repeat for link in my.querySelectorAll('navbarBookmark')
+					set link.tabIndex to -1
+				end
+			end
+			on navbar:show_state 
+				remove .navbar-collapse from me
+				repeat for link in my.querySelectorAll('navbarBookmark')
+					set link.tabIndex to 0
+				end
+			end
+		"
+	>
+		for i, link := range p.Links {
+			<navbarBookmark hx-get={ link.URL } role="listitem" tabindex="0" style={ fmt.Sprintf("--i: %d; --count: %d;", i+1, len(p.Links)) }>
+				{ link.Label }
+			</navbarBookmark>
+		}
+	</navbarBookmarks>
+}
+
+// NavbarAccount is the account/avatar button for the navbar
+templ navbarAccount(p *NavbarProps) {
+	<navbarAccount
+		class="relative cursor-pointer navbar-account-btn scroll-reactor group"
+		style={ fmt.Sprintf("--transition-delay: %d;", len(p.Links)+1) }
+		_="
+			on navbar:scrolled 
+				add .navbar-collapse to me
+				set my.querySelector('[role=button]').tabIndex to -1
+			end
+			on navbar:show_state 
+				remove .navbar-collapse from me
+				set my.querySelector('[role=button]').tabIndex to 0
+			end
+		"
+	>
+		<navbarAvatar
+			role="button"
+			tabindex="0"
+			aria-label="Account menu"
+			aria-expanded="false"
+			aria-controls="account-dropdown"
+			class="flex items-center justify-center w-8 h-8 border border-transparent rounded-full bg-base-600 group-hover:border-primary-401 outline-none focus:border-primary-401"
+			_="
+				on click 
+					toggle @aria-expanded 
+					toggle .hidden on #account-dropdown
+					if #account-dropdown.hidden is false then
+						set firstLink to #account-dropdown.querySelector('a[role=menuitem]')
+						if firstLink then call firstLink.focus() end
+					end
+				end
+
+				on keydown[key is 'Enter' or key is ' '] 
+					halt the event
+					toggle @aria-expanded 
+					toggle .hidden on #account-dropdown
+					if #account-dropdown.hidden is false then
+						set firstLink to #account-dropdown.querySelector('a[role=menuitem]')
+						if firstLink then call firstLink.focus() end
+					end
+				end
+
+				on keydown[key is 'Escape'] from window
+					toggle @aria-expanded 
+					toggle .hidden on #account-dropdown
+					if #account-dropdown.hidden is false then
+						set firstLink to #account-dropdown.querySelector('a[role=menuitem]')
+						if firstLink then call firstLink.focus() end
+					end
+				end
+				
+				on click from elsewhere
+					if not #account-dropdown.hidden then
+						set @aria-expanded to 'false'
+						add .hidden to #account-dropdown
+					end
+				end
+			"
+		>
+			// <img src="/avatar.jpg" alt="User avatar"/>
+		</navbarAvatar>
+		@navbarAccountMenu(p)
+	</navbarAccount>
+}
+
+// NavbarAccountMenu is the menu for the account button
+templ navbarAccountMenu(p *NavbarProps) {
+	<navbarDropdown
+		id="account-dropdown"
+		class="absolute right-7 hidden w-auto text-xl p-1 py-3 mt-1 border border-transparent rounded-lg shadow-lg bg-base-600 group-hover:border-primary-401"
+		role="menu"
+		aria-label="Account options"
+		_="
+			on keydown[key is 'ArrowDown' or key is 'j'] from me
+				halt the event
+				set links to my.querySelectorAll('a[role=menuitem]')
+				set currentIndex to Array.from(links).indexOf(document.activeElement)
+				if currentIndex < links.length - 1 then
+					call links[currentIndex + 1].focus()
+				else
+					call links[0].focus()
+				end
+			end
+			
+			on keydown[key is 'ArrowUp' or key is 'k'] from me
+				halt the event
+				set links to my.querySelectorAll('a[role=menuitem]')
+				set currentIndex to Array.from(links).indexOf(document.activeElement)
+				if currentIndex > 0 then
+					call links[currentIndex - 1].focus()
+				else
+					call links[links.length - 1].focus()
+				end
+			end
+			
+			on keydown[key is 'Home'] from me
+				halt the event
+				set firstLink to my.querySelector('a[role=menuitem]')
+				if firstLink then call firstLink.focus() end
+			end
+			
+			on keydown[key is 'End'] from me
+				halt the event
+				set links to my.querySelectorAll('a[role=menuitem]')
+				if links.length > 0 then call links[links.length - 1].focus() end
+			end
+			
+			on keydown[key is 'Escape'] from me
+				halt the event
+				set @aria-expanded of #account-dropdown.previousElementSibling to 'false'
+				add .hidden to me
+				call #account-dropdown.previousElementSibling.focus()
+			end
+		"
+	>
+		for _, link := range p.Account {
+			<a href={ link.URL } role="menuitem" tabindex="-1" class="block px-4 py-2 text-sm transition-colors focus:text-accent-400 hover:text-primary-401 outline-none whitespace-nowrap">
+				{ link.Label }
+			</a>
+		}
+	</navbarDropdown>
+}
+
+// NavbarCTA is the call to action or persistent element of the navbar when scrolling
+templ navbarCTA(p *NavbarProps) {
+	<navbarCTA
+		role="status"
+		aria-live="polite"
+		style={ fmt.Sprintf("--max-width: %d; --transition-delay: %d;", len(p.CTA.Label)+1, len(p.Links)+1) }
+		class="scroll-reactor navbar-cta-transition navbar-cta-hidden whitespace-nowrap"
+		_="
+			on navbar:scrolled 
+				remove .navbar-cta-hidden .delay-0 from me
+				remove @tabindex from my.querySelector('button')
+			end
+			on navbar:show_state 
+				add .navbar-cta-hidden .delay-0 to me
+				set my.querySelector('button').tabIndex to -1
+			end
+		"
+	>
+		<button
+			class="px-2 py-0.5 cursor-pointer rounded-md bg-primary-501 text-base-500 text-sm font-medium transition-color"
+			hx-get={ p.CTA.URL }
+		>
+			{ p.CTA.Label }
+		</button>
+	</navbarCTA>
+}

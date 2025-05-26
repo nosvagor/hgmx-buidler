@@ -9,3 +9,7 @@
     max-width: 160rem; /* 2560px */
   }
 }
+
+@utility debug {
+  border: 1px solid red;
+}

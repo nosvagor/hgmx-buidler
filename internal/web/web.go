@@ -29,7 +29,7 @@ func Page(c echo.Context, content templ.Component, title string) error {
 	}
 
 	if !hxRequest || hxRefresh || hxHistoryRestoreRequest || !hxBoosted {
-		return render(c, http.StatusOK, views.Full(views.Main(content, title)))
+		return render(c, http.StatusOK, views.Full(views.Main(content, title), NewNavbar(c)))
 	}
 	return render(c, http.StatusOK, views.Main(content, title))
 }
