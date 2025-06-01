@@ -53,14 +53,10 @@ templ Navbar(p *NavbarProps) {
 		"
 	>
 		@navbarBrand(p)
-		<navbox class="flex items-center justify-end">
-			@navbarTelescope()
-			<quicklinks
-				class="flex items-center space-x-4"
-			>
-				@navbarBookmarks(p)
-				@navbarAccount(p)
-			</quicklinks>
+		<navbox class="flex items-center justify-end space-x-4">
+			@navbarTelescope(p)
+			@navbarBookmarks(p)
+			@navbarAccount(p)
 			@navbarCTA(p)
 		</navbox>
 	</navbar>
@@ -71,25 +67,39 @@ templ Navbar(p *NavbarProps) {
 
 // NavbarBrand is the logo and name of the site, links to home page
 templ navbarBrand(p *NavbarProps) {
-	<navbarBrand class="text-lg font-semibold tracking-tight font-display">
-		<a href="/" aria-label="Home" class="transition-colors hover:text-accent-400">
+	<navbarBrand
+		class="text-lg font-semibold tracking-tight font-display"
+	>
+		<a href="/" aria-label="Home" class="transition-colors hover:text-primary-400">
 			{ p.App }
 		</a>
 	</navbarBrand>
 }
 
+func (p *NavbarProps) linksChCount() (width int) {
+	for _, link := range p.Links {
+		width += len(link.Label)
+	}
+	return width
+}
+
 // NavbarTelescope is the telescope/search box for the navbar
-templ navbarTelescope() {
+templ navbarTelescope(p *NavbarProps) {
 	<navbarTelescope
 		type="button"
 		role="button"
 		tabindex="0"
 		aria-label="Open telescope search"
 		aria-haspopup="dialog"
-		class="items-center hidden px-2 py-1 text-xs outline-none focus:text-primary-401 transition-colors border rounded-md shadow-inner cursor-pointer border-base-700 bg-base-600 sm:inline-flex text-secondary-601 hover:text-primary-401 mr-4 scroll-reactor"
+		style={ fmt.Sprintf("--link-count: %d; --ch-count: %d;", len(p.Links)+1, p.linksChCount()) }
+		class="scroll-reactor items-center px-2 py-1 text-xs outline-none focus:text-primary-401 transition-colors border rounded-md shadow-inner cursor-pointer border-base-700 bg-base-600 sm:inline-flex text-secondary-601 hover:text-primary-401"
 		_="
-			on navbar:scrolled set my.tabIndex to -1
-			on navbar:show_state set my.tabIndex to 0
+			on navbar:scrolled 
+				add .telescope-collapse to me
+			end
+			on navbar:show_state 
+				remove .telescope-collapse from me
+			end
 		"
 	>
 		<svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
@@ -156,7 +166,7 @@ templ navbarBookmarks(p *NavbarProps) {
 // NavbarAccount is the account/avatar button for the navbar
 templ navbarAccount(p *NavbarProps) {
 	<navbarAccount
-		class="relative cursor-pointer navbar-account-btn scroll-reactor group"
+		class="relative cursor-pointer navbar-account-btn scroll-reactor"
 		style={ fmt.Sprintf("--transition-delay: %d;", len(p.Links)+1) }
 		_="
 			on navbar:scrolled 
@@ -175,7 +185,7 @@ templ navbarAccount(p *NavbarProps) {
 			aria-label="Account menu"
 			aria-expanded="false"
 			aria-controls="account-dropdown"
-			class="flex items-center justify-center w-8 h-8 border border-transparent rounded-full bg-base-600 group-hover:border-primary-401 outline-none focus:border-primary-401"
+			class="flex items-center justify-center w-8 h-8 border border-transparent rounded-full bg-base-600 hover:border-primary-401 outline-none focus:border-primary-401"
 			_="
 				on click 
 					toggle @aria-expanded 
@@ -196,15 +206,6 @@ templ navbarAccount(p *NavbarProps) {
 					end
 				end
 
-				on keydown[key is 'Escape'] from window
-					toggle @aria-expanded 
-					toggle .hidden on #account-dropdown
-					if #account-dropdown.hidden is false then
-						set firstLink to #account-dropdown.querySelector('a[role=menuitem]')
-						if firstLink then call firstLink.focus() end
-					end
-				end
-				
 				on click from elsewhere
 					if not #account-dropdown.hidden then
 						set @aria-expanded to 'false'
@@ -223,7 +224,7 @@ templ navbarAccount(p *NavbarProps) {
 templ navbarAccountMenu(p *NavbarProps) {
 	<navbarDropdown
 		id="account-dropdown"
-		class="absolute right-7 hidden w-auto text-xl p-1 py-3 mt-1 border border-transparent rounded-lg shadow-lg bg-base-600 group-hover:border-primary-401"
+		class="absolute right-7 hidden w-auto text-xl p-1 py-3 mt-1 border border-transparent rounded-lg shadow-lg bg-base-600"
 		role="menu"
 		aria-label="Account options"
 		_="
@@ -265,12 +266,11 @@ templ navbarAccountMenu(p *NavbarProps) {
 				halt the event
 				set @aria-expanded of #account-dropdown.previousElementSibling to 'false'
 				add .hidden to me
-				call #account-dropdown.previousElementSibling.focus()
 			end
 		"
 	>
 		for _, link := range p.Account {
-			<a href={ link.URL } role="menuitem" tabindex="-1" class="block px-4 py-2 text-sm transition-colors focus:text-accent-400 hover:text-primary-401 outline-none whitespace-nowrap">
+			<a href={ link.URL } role="menuitem" tabindex="-1" class="block px-4 py-2 text-sm transition-colors hover:text-primary-401 outline-none whitespace-nowrap">
 				{ link.Label }
 			</a>
 		}
@@ -283,7 +283,7 @@ templ navbarCTA(p *NavbarProps) {
 		role="status"
 		aria-live="polite"
 		style={ fmt.Sprintf("--max-width: %d; --transition-delay: %d;", len(p.CTA.Label)+1, len(p.Links)+1) }
-		class="scroll-reactor navbar-cta-transition navbar-cta-hidden whitespace-nowrap"
+		class="scroll-reactor navbar-cta-transition navbar-cta-hidden whitespace-nowrap -mr-4"
 		_="
 			on navbar:scrolled 
 				remove .navbar-cta-hidden .delay-0 from me
@@ -296,7 +296,7 @@ templ navbarCTA(p *NavbarProps) {
 		"
 	>
 		<button
-			class="px-2 py-0.5 cursor-pointer rounded-md bg-primary-501 text-base-500 text-sm font-medium transition-color"
+			class="px-3 py-1 cursor-pointer rounded bg-primary-501 text-base-500 text-sm font-medium transition-color"
 			hx-get={ p.CTA.URL }
 		>
 			{ p.CTA.Label }

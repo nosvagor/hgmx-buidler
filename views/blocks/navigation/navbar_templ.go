@@ -54,15 +54,11 @@ func Navbar(p *NavbarProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<navbox class=\"flex items-center justify-end\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<navbox class=\"flex items-center justify-end space-x-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = navbarTelescope().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<quicklinks class=\"flex items-center space-x-4\">")
+		templ_7745c5c3_Err = navbarTelescope(p).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,15 +70,11 @@ func Navbar(p *NavbarProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</quicklinks>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = navbarCTA(p).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</navbox></navbar>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</navbox></navbar>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -118,20 +110,20 @@ func navbarBrand(p *NavbarProps) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<navbarBrand class=\"text-lg font-semibold tracking-tight font-display\"><a href=\"/\" aria-label=\"Home\" class=\"transition-colors hover:text-accent-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<navbarBrand class=\"text-lg font-semibold tracking-tight font-display\"><a href=\"/\" aria-label=\"Home\" class=\"transition-colors hover:text-primary-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.App)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 76, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 74, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</a></navbarBrand>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</a></navbarBrand>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -139,8 +131,15 @@ func navbarBrand(p *NavbarProps) templ.Component {
 	})
 }
 
+func (p *NavbarProps) linksChCount() (width int) {
+	for _, link := range p.Links {
+		width += len(link.Label)
+	}
+	return width
+}
+
 // NavbarTelescope is the telescope/search box for the navbar
-func navbarTelescope() templ.Component {
+func navbarTelescope(p *NavbarProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -161,7 +160,20 @@ func navbarTelescope() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<navbarTelescope type=\"button\" role=\"button\" tabindex=\"0\" aria-label=\"Open telescope search\" aria-haspopup=\"dialog\" class=\"items-center hidden px-2 py-1 text-xs outline-none focus:text-primary-401 transition-colors border rounded-md shadow-inner cursor-pointer border-base-700 bg-base-600 sm:inline-flex text-secondary-601 hover:text-primary-401 mr-4 scroll-reactor\" _=\"\n\t\t\ton navbar:scrolled set my.tabIndex to -1\n\t\t\ton navbar:show_state set my.tabIndex to 0\n\t\t\"><svg class=\"w-4 h-4 mr-1\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><rect x=\"6\" y=\"9\" width=\"8\" height=\"4\" rx=\"1\" transform=\"rotate(-25 10 11)\"></rect> <rect x=\"2\" y=\"12\" width=\"3\" height=\"2\" rx=\"1\" transform=\"rotate(-25 3.5 13)\"></rect> <rect x=\"15\" y=\"6\" width=\"4\" height=\"6\" rx=\"2\" transform=\"rotate(-25 17 9)\"></rect> <rect x=\"8.5\" y=\"14\" width=\"1.5\" height=\"6\" rx=\"0.75\" transform=\"rotate(20 9.25 17)\"></rect> <rect x=\"13\" y=\"14\" width=\"1.5\" height=\"6\" rx=\"0.75\" transform=\"rotate(-20 13.75 17)\"></rect></svg> <kbd _=\"\n\t\t\t\ton load\n\t\t\t\t\tif navigator.platform.toUpperCase().indexOf(&#39;MAC&#39;) &gt;= 0\n\t\t\t\t\t\tset my.textContent to &#39;⌘K&#39;\n\t\t\t\t\telse\n\t\t\t\t\t\tset my.textContent to &#39;Ctrl+K&#39;\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\ton click\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\ton keydown[metaKey and key is &#39;k&#39;] from window\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\ton keydown[ctrlKey and key is &#39;k&#39;] from window\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\">Ctrl+K</kbd></navbarTelescope>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<navbarTelescope type=\"button\" role=\"button\" tabindex=\"0\" aria-label=\"Open telescope search\" aria-haspopup=\"dialog\" style=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--link-count: %d; --ch-count: %d;", len(p.Links)+1, p.linksChCount()))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 94, Col: 92}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" class=\"scroll-reactor items-center px-2 py-1 text-xs outline-none focus:text-primary-401 transition-colors border rounded-md shadow-inner cursor-pointer border-base-700 bg-base-600 sm:inline-flex text-secondary-601 hover:text-primary-401\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tadd .telescope-collapse to me\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tremove .telescope-collapse from me\n\t\t\tend\n\t\t\"><svg class=\"w-4 h-4 mr-1\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><rect x=\"6\" y=\"9\" width=\"8\" height=\"4\" rx=\"1\" transform=\"rotate(-25 10 11)\"></rect> <rect x=\"2\" y=\"12\" width=\"3\" height=\"2\" rx=\"1\" transform=\"rotate(-25 3.5 13)\"></rect> <rect x=\"15\" y=\"6\" width=\"4\" height=\"6\" rx=\"2\" transform=\"rotate(-25 17 9)\"></rect> <rect x=\"8.5\" y=\"14\" width=\"1.5\" height=\"6\" rx=\"0.75\" transform=\"rotate(20 9.25 17)\"></rect> <rect x=\"13\" y=\"14\" width=\"1.5\" height=\"6\" rx=\"0.75\" transform=\"rotate(-20 13.75 17)\"></rect></svg> <kbd _=\"\n\t\t\t\ton load\n\t\t\t\t\tif navigator.platform.toUpperCase().indexOf(&#39;MAC&#39;) &gt;= 0\n\t\t\t\t\t\tset my.textContent to &#39;⌘K&#39;\n\t\t\t\t\telse\n\t\t\t\t\t\tset my.textContent to &#39;Ctrl+K&#39;\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\ton click\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\ton keydown[metaKey and key is &#39;k&#39;] from window\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\ton keydown[ctrlKey and key is &#39;k&#39;] from window\n\t\t\t\t\thalt the event\n\t\t\t\t\tsend telescope:open\n\t\t\t\tend\n\t\t\t\">Ctrl+K</kbd></navbarTelescope>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -186,61 +198,61 @@ func navbarBookmarks(p *NavbarProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<navbarBookmarks role=\"list\" class=\"items-center hidden gap-3 font-medium scroll-reactor font-display md:flex\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tadd .navbar-collapse to me\n\t\t\t\trepeat for link in my.querySelectorAll(&#39;navbarBookmark&#39;)\n\t\t\t\t\tset link.tabIndex to -1\n\t\t\t\tend\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tremove .navbar-collapse from me\n\t\t\t\trepeat for link in my.querySelectorAll(&#39;navbarBookmark&#39;)\n\t\t\t\t\tset link.tabIndex to 0\n\t\t\t\tend\n\t\t\tend\n\t\t\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<navbarBookmarks role=\"list\" class=\"items-center hidden gap-3 font-medium scroll-reactor font-display md:flex\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tadd .navbar-collapse to me\n\t\t\t\trepeat for link in my.querySelectorAll(&#39;navbarBookmark&#39;)\n\t\t\t\t\tset link.tabIndex to -1\n\t\t\t\tend\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tremove .navbar-collapse from me\n\t\t\t\trepeat for link in my.querySelectorAll(&#39;navbarBookmark&#39;)\n\t\t\t\t\tset link.tabIndex to 0\n\t\t\t\tend\n\t\t\tend\n\t\t\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i, link := range p.Links {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<navbarBookmark hx-get=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(link.URL)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 149, Col: 36}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" role=\"listitem\" tabindex=\"0\" style=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<navbarBookmark hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--i: %d; --count: %d;", i+1, len(p.Links)))
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(link.URL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 149, Col: 131}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 159, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" role=\"listitem\" tabindex=\"0\" style=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--i: %d; --count: %d;", i+1, len(p.Links)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 150, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 159, Col: 131}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</navbarBookmark>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 160, Col: 16}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</navbarBookmark>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</navbarBookmarks>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</navbarBookmarks>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -265,25 +277,25 @@ func navbarAccount(p *NavbarProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<navbarAccount class=\"relative cursor-pointer navbar-account-btn scroll-reactor group\" style=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<navbarAccount class=\"relative cursor-pointer navbar-account-btn scroll-reactor\" style=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--transition-delay: %d;", len(p.Links)+1))
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--transition-delay: %d;", len(p.Links)+1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 160, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 170, Col: 64}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tadd .navbar-collapse to me\n\t\t\t\tset my.querySelector(&#39;[role=button]&#39;).tabIndex to -1\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tremove .navbar-collapse from me\n\t\t\t\tset my.querySelector(&#39;[role=button]&#39;).tabIndex to 0\n\t\t\tend\n\t\t\"><navbarAvatar role=\"button\" tabindex=\"0\" aria-label=\"Account menu\" aria-expanded=\"false\" aria-controls=\"account-dropdown\" class=\"flex items-center justify-center w-8 h-8 border border-transparent rounded-full bg-base-600 group-hover:border-primary-401 outline-none focus:border-primary-401\" _=\"\n\t\t\t\ton click \n\t\t\t\t\ttoggle @aria-expanded \n\t\t\t\t\ttoggle .hidden on #account-dropdown\n\t\t\t\t\tif #account-dropdown.hidden is false then\n\t\t\t\t\t\tset firstLink to #account-dropdown.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\t\t\tend\n\t\t\t\tend\n\n\t\t\t\ton keydown[key is &#39;Enter&#39; or key is &#39; &#39;] \n\t\t\t\t\thalt the event\n\t\t\t\t\ttoggle @aria-expanded \n\t\t\t\t\ttoggle .hidden on #account-dropdown\n\t\t\t\t\tif #account-dropdown.hidden is false then\n\t\t\t\t\t\tset firstLink to #account-dropdown.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\t\t\tend\n\t\t\t\tend\n\n\t\t\t\ton keydown[key is &#39;Escape&#39;] from window\n\t\t\t\t\ttoggle @aria-expanded \n\t\t\t\t\ttoggle .hidden on #account-dropdown\n\t\t\t\t\tif #account-dropdown.hidden is false then\n\t\t\t\t\t\tset firstLink to #account-dropdown.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\t\n\t\t\t\ton click from elsewhere\n\t\t\t\t\tif not #account-dropdown.hidden then\n\t\t\t\t\t\tset @aria-expanded to &#39;false&#39;\n\t\t\t\t\t\tadd .hidden to #account-dropdown\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\"></navbarAvatar>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tadd .navbar-collapse to me\n\t\t\t\tset my.querySelector(&#39;[role=button]&#39;).tabIndex to -1\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tremove .navbar-collapse from me\n\t\t\t\tset my.querySelector(&#39;[role=button]&#39;).tabIndex to 0\n\t\t\tend\n\t\t\"><navbarAvatar role=\"button\" tabindex=\"0\" aria-label=\"Account menu\" aria-expanded=\"false\" aria-controls=\"account-dropdown\" class=\"flex items-center justify-center w-8 h-8 border border-transparent rounded-full bg-base-600 hover:border-primary-401 outline-none focus:border-primary-401\" _=\"\n\t\t\t\ton click \n\t\t\t\t\ttoggle @aria-expanded \n\t\t\t\t\ttoggle .hidden on #account-dropdown\n\t\t\t\t\tif #account-dropdown.hidden is false then\n\t\t\t\t\t\tset firstLink to #account-dropdown.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\t\t\tend\n\t\t\t\tend\n\n\t\t\t\ton keydown[key is &#39;Enter&#39; or key is &#39; &#39;] \n\t\t\t\t\thalt the event\n\t\t\t\t\ttoggle @aria-expanded \n\t\t\t\t\ttoggle .hidden on #account-dropdown\n\t\t\t\t\tif #account-dropdown.hidden is false then\n\t\t\t\t\t\tset firstLink to #account-dropdown.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\t\t\tend\n\t\t\t\tend\n\n\t\t\t\ton click from elsewhere\n\t\t\t\t\tif not #account-dropdown.hidden then\n\t\t\t\t\t\tset @aria-expanded to &#39;false&#39;\n\t\t\t\t\t\tadd .hidden to #account-dropdown\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\"></navbarAvatar>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -291,7 +303,7 @@ func navbarAccount(p *NavbarProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</navbarAccount>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</navbarAccount>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -316,44 +328,44 @@ func navbarAccountMenu(p *NavbarProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<navbarDropdown id=\"account-dropdown\" class=\"absolute right-7 hidden w-auto text-xl p-1 py-3 mt-1 border border-transparent rounded-lg shadow-lg bg-base-600 group-hover:border-primary-401\" role=\"menu\" aria-label=\"Account options\" _=\"\n\t\t\ton keydown[key is &#39;ArrowDown&#39; or key is &#39;j&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tset currentIndex to Array.from(links).indexOf(document.activeElement)\n\t\t\t\tif currentIndex &lt; links.length - 1 then\n\t\t\t\t\tcall links[currentIndex + 1].focus()\n\t\t\t\telse\n\t\t\t\t\tcall links[0].focus()\n\t\t\t\tend\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;ArrowUp&#39; or key is &#39;k&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tset currentIndex to Array.from(links).indexOf(document.activeElement)\n\t\t\t\tif currentIndex &gt; 0 then\n\t\t\t\t\tcall links[currentIndex - 1].focus()\n\t\t\t\telse\n\t\t\t\t\tcall links[links.length - 1].focus()\n\t\t\t\tend\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;Home&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset firstLink to my.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;End&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tif links.length &gt; 0 then call links[links.length - 1].focus() end\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;Escape&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset @aria-expanded of #account-dropdown.previousElementSibling to &#39;false&#39;\n\t\t\t\tadd .hidden to me\n\t\t\t\tcall #account-dropdown.previousElementSibling.focus()\n\t\t\tend\n\t\t\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<navbarDropdown id=\"account-dropdown\" class=\"absolute right-7 hidden w-auto text-xl p-1 py-3 mt-1 border border-transparent rounded-lg shadow-lg bg-base-600\" role=\"menu\" aria-label=\"Account options\" _=\"\n\t\t\ton keydown[key is &#39;ArrowDown&#39; or key is &#39;j&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tset currentIndex to Array.from(links).indexOf(document.activeElement)\n\t\t\t\tif currentIndex &lt; links.length - 1 then\n\t\t\t\t\tcall links[currentIndex + 1].focus()\n\t\t\t\telse\n\t\t\t\t\tcall links[0].focus()\n\t\t\t\tend\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;ArrowUp&#39; or key is &#39;k&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tset currentIndex to Array.from(links).indexOf(document.activeElement)\n\t\t\t\tif currentIndex &gt; 0 then\n\t\t\t\t\tcall links[currentIndex - 1].focus()\n\t\t\t\telse\n\t\t\t\t\tcall links[links.length - 1].focus()\n\t\t\t\tend\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;Home&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset firstLink to my.querySelector(&#39;a[role=menuitem]&#39;)\n\t\t\t\tif firstLink then call firstLink.focus() end\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;End&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset links to my.querySelectorAll(&#39;a[role=menuitem]&#39;)\n\t\t\t\tif links.length &gt; 0 then call links[links.length - 1].focus() end\n\t\t\tend\n\t\t\t\n\t\t\ton keydown[key is &#39;Escape&#39;] from me\n\t\t\t\thalt the event\n\t\t\t\tset @aria-expanded of #account-dropdown.previousElementSibling to &#39;false&#39;\n\t\t\t\tadd .hidden to me\n\t\t\tend\n\t\t\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, link := range p.Account {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 templ.SafeURL = link.URL
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var12)))
+			var templ_7745c5c3_Var13 templ.SafeURL = link.URL
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var13)))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" role=\"menuitem\" tabindex=\"-1\" class=\"block px-4 py-2 text-sm transition-colors focus:text-accent-400 hover:text-primary-401 outline-none whitespace-nowrap\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" role=\"menuitem\" tabindex=\"-1\" class=\"block px-4 py-2 text-sm transition-colors hover:text-primary-401 outline-none whitespace-nowrap\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(link.Label)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 274, Col: 16}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</navbarDropdown>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</navbarDropdown>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -378,51 +390,51 @@ func navbarCTA(p *NavbarProps) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var14 == nil {
-			templ_7745c5c3_Var14 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<navbarCTA role=\"status\" aria-live=\"polite\" style=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var15 string
-		templ_7745c5c3_Var15, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--max-width: %d; --transition-delay: %d;", len(p.CTA.Label)+1, len(p.Links)+1))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 285, Col: 101}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\" class=\"scroll-reactor navbar-cta-transition navbar-cta-hidden whitespace-nowrap\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tremove .navbar-cta-hidden .delay-0 from me\n\t\t\t\tremove @tabindex from my.querySelector(&#39;button&#39;)\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tadd .navbar-cta-hidden .delay-0 to me\n\t\t\t\tset my.querySelector(&#39;button&#39;).tabIndex to -1\n\t\t\tend\n\t\t\"><button class=\"px-2 py-0.5 cursor-pointer rounded-md bg-primary-501 text-base-500 text-sm font-medium transition-color\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<navbarCTA role=\"status\" aria-live=\"polite\" style=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(p.CTA.URL)
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("--max-width: %d; --transition-delay: %d;", len(p.CTA.Label)+1, len(p.Links)+1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 300, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 285, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"scroll-reactor navbar-cta-transition navbar-cta-hidden whitespace-nowrap -mr-4\" _=\"\n\t\t\ton navbar:scrolled \n\t\t\t\tremove .navbar-cta-hidden .delay-0 from me\n\t\t\t\tremove @tabindex from my.querySelector(&#39;button&#39;)\n\t\t\tend\n\t\t\ton navbar:show_state \n\t\t\t\tadd .navbar-cta-hidden .delay-0 to me\n\t\t\t\tset my.querySelector(&#39;button&#39;).tabIndex to -1\n\t\t\tend\n\t\t\"><button class=\"px-3 py-1 cursor-pointer rounded bg-primary-501 text-base-500 text-sm font-medium transition-color\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(p.CTA.Label)
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(p.CTA.URL)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 302, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 300, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</button></navbarCTA>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var18 string
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(p.CTA.Label)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/blocks/navigation/navbar.templ`, Line: 302, Col: 16}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</button></navbarCTA>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

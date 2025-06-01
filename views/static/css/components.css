@@ -1,18 +1,5 @@
 /* for custom css */
 @layer components {
-  .navbar-quicklinks-transition {
-    transition-timing-function: ease;
-    transition-duration: calc(var(--link-count + 1) * 120ms * 2);
-    transition-property: max-width;
-    transform: translateX(0);
-    max-width: calc(var(--char-count) * 1ch + var(--link-count) * 1rem);
-  }
-  .navbar-quicklinks-hidden {
-    max-width: 0;
-    transition-timing-function: ease;
-    transition-duration: calc(var(--link-count + 1) * 120ms);
-  }
-
   navbarBookmark {
     position: relative;
     display: inline-block;
@@ -64,13 +51,16 @@
     }
   }
 
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 0.5;
+  @keyframes bookmarksCollapse {
+    from {
+      transform: translateX(0);
+      opacity: 1;
     }
-    50% {
-      opacity: 0.8;
+    to {
+      transform: translateX(
+        calc(var(--ch-count) * 1ch + 2rem + var(--link-count) * 1rem)
+      );
+      opacity: 0;
     }
   }
 
@@ -80,6 +70,14 @@
     transition-timing-function: ease-out;
     pointer-events: none;
     transition-delay: calc(var(--i, 1) * 120ms);
+  }
+
+  .telescope-collapse {
+    animation: bookmarksCollapse calc(var(--link-count) * 120ms) ease-out;
+    animation-delay: calc(
+      var(--link-count) * 50ms + calc(var(--ch-count) * 10ms)
+    );
+    animation-fill-mode: forwards;
   }
 
   .navbar-account-btn {
@@ -100,7 +98,7 @@
     transition-duration: calc(var(--delay) * 1.25);
     transition-timing-function: ease-out;
     transition-property: opacity, transform, max-width;
-    transition-delay: var(--delay);
+    transition-delay: var(--delay) * 0.75;
     opacity: 1;
     transform: translateX(0);
     max-width: calc(var(--max-width) * 1ch);
@@ -109,7 +107,7 @@
   }
 
   .navbar-cta-hidden {
-    max-width: 0 !important;
+    max-width: 0;
     transition-timing-function: ease-out;
     transition-duration: calc(var(--transition-delay) * 120ms);
     opacity: 0;
