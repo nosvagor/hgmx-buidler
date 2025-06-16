@@ -1,7 +1,6 @@
 package home
 
 templ Main() {
-	<div class="h-50 bg-base-500"></div>
 	// for range 50 {
 	// 	<div class="w-full h-10 py-2 rounded-md bg-base-400">
 	// 		<p class="text-base-100">
@@ -10,10 +9,7 @@ templ Main() {
 	// 	</div>
 	// }
 	for i := range 500 {
-		<div class="w-full h-10 py-2 rounded-md bg-base-300">{ i }</div>
-	}
-	for range 10 {
-		<div class="w-full h-10 py-2 rounded-md bg-base-100"></div>
+		<div class="w-full h-10 py-2 rounded-md text-base-100">{ i }</div>
 	}
 	<div class="h-[25%]"></div>
 }

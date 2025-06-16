@@ -1,0 +1,158 @@
+package navigation
+
+import "github.com/nosvagor/hgmx-builder/views/shared"
+
+type NavbarProps struct {
+	App     string
+	Links   []PageLink
+	CTA     *PageLink
+	Account []PageLink
+}
+
+type PageLink struct {
+	Label string
+	URL   templ.SafeURL
+}
+
+templ Navbar(p *NavbarProps) {
+	@shared.Script(&shared.ScriptProps{Path: "motion/navbar.js", Module: true, Defer: true})
+	<navbar
+		class="sticky top-0 z-50 items-center justify-between flex gap-4 px-8 py-3 transition duration-200 ease-out md:flex"
+		_="
+			init
+				if window.scrollY is 0 then
+					remove .navbar_scrolling from me
+				else
+					add .navbar_scrolling to me
+					call window.navbarScrolling(true)
+				end
+			end
+
+			on scroll from window
+				if window.scrollY is 0 and me.matches('.navbar_scrolling') then
+					remove .navbar_scrolling from me
+					call window.navbarScrolling(false)
+					call window.closeMenu()
+				else if window.scrollY > 0 and not me.matches('.navbar_scrolling') then
+					add .navbar_scrolling to me
+					call window.navbarScrolling(true)
+				end
+			end
+		"
+	>
+		@Brand(p)
+		<div class="flex items-center gap-4">
+			@TelescopeTrigger(p)
+			@Bookmarks(p)
+			@NavMenu(p)
+			@CTA(p)
+		</div>
+	</navbar>
+	@Telescope(nil)
+}
+
+templ Brand(p *NavbarProps) {
+	<brand
+		class="text-lg font-semibold tracking-tight font-display"
+	>
+		<a href="/" class="transition-colors hover:text-primary-400">
+			{ p.App }
+		</a>
+	</brand>
+}
+
+templ TelescopeTrigger(p *NavbarProps) {
+	<telescopeTrigger
+		type="button"
+		role="button"
+		tabindex="0"
+		class="items-end flex w-fit px-2 py-1 text-[0.625rem] transition-colors border rounded-md shadow-inner outline-none cursor-pointer border-base-700 bg-base-600 text-secondary-601 hover:text-primary-401"
+		_="
+			on click
+				halt the event
+				send telescope:open
+			end
+		"
+	>
+		<svg class="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+			<rect x="6" y="9" width="8" height="4" rx="1" transform="rotate(-25 10 11)"></rect>
+			<rect x="2" y="12" width="3" height="2" rx="1" transform="rotate(-25 3.5 13)"></rect>
+			<rect x="15" y="6" width="4" height="6" rx="2" transform="rotate(-25 17 9)"></rect>
+			<rect x="8.5" y="14" width="1.5" height="6" rx="0.75" transform="rotate(20 9.25 17)"></rect>
+			<rect x="13" y="14" width="1.5" height="6" rx="0.75" transform="rotate(-20 13.75 17)"></rect>
+		</svg>
+		<kbd
+			_="
+				on load
+					if navigator.platform.toUpperCase().indexOf('MAC') >= 0
+						set my.textContent to '⌘K'
+					else
+						set my.textContent to 'Ctrl+K'
+					end
+				end
+				on click
+					halt the event
+					send telescope:open
+				end
+				on keydown[metaKey and key is 'k'] from window
+					halt the event
+					send telescope:open
+				end
+				on keydown[ctrlKey and key is 'k'] from window
+					halt the event
+					send telescope:open
+				end
+			"
+		>Ctrl+K</kbd>
+	</telescopeTrigger>
+}
+
+templ Bookmarks(p *NavbarProps) {
+	<bookmarks class="items-center hidden font-medium font-display md:flex overflow-hidden">
+		for _, link := range p.Links {
+			<bookmark hx-get={ link.URL } tabindex="0" class="ml-3 cursor-pointer bookmark_item whitespace-nowrap hover:text-primary-401 first:ml-0">
+				{ link.Label }
+			</bookmark>
+		}
+	</bookmarks>
+}
+
+templ NavMenu(p *NavbarProps) {
+	<navMenu
+		id="navMenu"
+		tabindex="0"
+		class="cursor-pointer centered w-10 h-10 rounded-full outline-none bg-base-600 text-secondary-601 hover:text-primary-401"
+		_="
+			on click or keydown[key is 'Enter' or key is ' ']
+				halt the event
+				toggle .menu-open on me
+				call window.toggleMenu()
+			end
+
+			on click from elsewhere
+				if me.matches('.menu-open')
+					remove .menu-open from me
+					call window.toggleMenu()
+				end
+			end
+		"
+	>
+		<svg viewBox="0 0 32 32" class="w-6 h-6 overflow-visible">
+			<path id="icon-p1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M 9,8 C 9,0, 23,0, 23,8"></path>
+			<path id="icon-p2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M 9,8 C 9,16, 23,16, 23,8"></path>
+			<path id="icon-p3" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M 6,26 C 6,18, 26,18, 26,26"></path>
+		</svg>
+	</navMenu>
+}
+
+templ CTA(p *NavbarProps) {
+	<cta class="hidden whitespace-nowrap">
+		<button
+			class="px-3 py-1 text-sm font-medium transition-colors rounded cursor-pointer bg-primary-501 text-base-500"
+			hx-get={ p.CTA.URL }
+			tabindex="-1"
+		>
+			{ p.CTA.Label }
+		</button>
+	</cta>
+}

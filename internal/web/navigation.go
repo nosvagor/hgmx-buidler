@@ -2,7 +2,7 @@ package web
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/nosvagor/hgmx-builder/views/blocks/navigation"
+	"github.com/nosvagor/hgmx-builder/views/components/navigation"
 )
 
 func NewNavbar(c echo.Context) *navigation.NavbarProps {
@@ -12,9 +12,10 @@ func NewNavbar(c echo.Context) *navigation.NavbarProps {
 		Links: []navigation.PageLink{
 			{Label: "Docs", URL: "/docs"},
 			{Label: "Palette", URL: "/palette"},
+			{Label: "Showcase", URL: "/showcase"},
 			{Label: "Blog", URL: "/blog"},
 		},
-		CTA: navigation.PageLink{
+		CTA: &navigation.PageLink{
 			Label: "Download",
 			URL:   "/download",
 		},

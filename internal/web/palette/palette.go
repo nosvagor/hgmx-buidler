@@ -7,5 +7,5 @@ import (
 )
 
 func Main(c echo.Context) error {
-	return c.String(http.StatusOK, "palette")
+	return c.String(http.StatusOK, "Palette")
 }
