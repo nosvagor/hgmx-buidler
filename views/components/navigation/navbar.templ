@@ -4,6 +4,7 @@ import "github.com/nosvagor/hgmx-builder/views/shared"
 
 type NavbarProps struct {
 	App     string
+	InnerLinks []PageLink
 	Links   []PageLink
 	CTA     *PageLink
 	Account []PageLink
@@ -17,7 +18,7 @@ type PageLink struct {
 templ Navbar(p *NavbarProps) {
 	@shared.Script(&shared.ScriptProps{Path: "motion/navbar.js", Module: true, Defer: true})
 	<navbar
-		class="sticky top-0 z-50 items-center justify-between flex gap-4 px-8 py-3 transition duration-200 ease-out md:flex"
+		class="sticky top-0 z-50 items-center justify-between flex gap-4 px-8 py-3 transition duration-200 ease-out"
 		_="
 			init
 				if window.scrollY is 0 then
@@ -48,6 +49,7 @@ templ Navbar(p *NavbarProps) {
 			@CTA(p)
 		</div>
 	</navbar>
+	@ExpandedNavMenu(p)
 	@Telescope(nil)
 }
 
@@ -108,7 +110,7 @@ templ TelescopeTrigger(p *NavbarProps) {
 }
 
 templ Bookmarks(p *NavbarProps) {
-	<bookmarks class="items-center hidden font-medium font-display md:flex overflow-hidden">
+	<bookmarks class="items-center flex font-medium font-display overflow-hidden">
 		for _, link := range p.Links {
 			<bookmark hx-get={ link.URL } tabindex="0" class="ml-3 cursor-pointer bookmark_item whitespace-nowrap hover:text-primary-401 first:ml-0">
 				{ link.Label }
@@ -121,21 +123,38 @@ templ NavMenu(p *NavbarProps) {
 	<navMenu
 		id="navMenu"
 		tabindex="0"
-		class="cursor-pointer centered w-10 h-10 rounded-full outline-none bg-base-600 text-secondary-601 hover:text-primary-401"
+		class="cursor-pointer centered w-10 h-10 rounded-full outline-none bg-base-600 text-secondary-601 hover:text-primary-401 relative"
 		_="
-			on click or keydown[key is 'Enter' or key is ' ']
-				halt the event
-				toggle .menu-open on me
+		on click or keydown[key is 'Enter' or key is ' ']
+			halt the event
+			toggle .menu-open on me
+			call window.toggleMenu()
+		end
+
+		on click from elsewhere
+			if me.matches('.menu-open')
+				remove .menu-open from me
+				call window.toggleMenu()
+			end
+		end
+
+		on keydown[key is 'Escape'] from window
+			if me.matches('.menu-open')
+				remove .menu-open from me
 				call window.toggleMenu()
 			end
 
-			on click from elsewhere
-				if me.matches('.menu-open')
-					remove .menu-open from me
-					call window.toggleMenu()
-				end
+			if not window.__lastEscapeTime then set window.__lastEscapeTime to 0 end
+			set now to Date.now()
+			if now - window.__lastEscapeTime < 400
+				add .menu-open to me
+				call window.toggleMenu()
+				set window.__lastEscapeTime to 0
+			else
+				set window.__lastEscapeTime to now
 			end
-		"
+		end
+	"
 	>
 		<svg viewBox="0 0 32 32" class="w-6 h-6 overflow-visible">
 			<path id="icon-p1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M 9,8 C 9,0, 23,0, 23,8"></path>
@@ -145,10 +164,38 @@ templ NavMenu(p *NavbarProps) {
 	</navMenu>
 }
 
+templ ExpandedNavMenu(p *NavbarProps) {
+	<expandedNavMenu id="expandedNavMenu" class="fixed inset-0 pointer-events-none z-40">
+		<svg class="absolute top-0 left-0 w-full h-full">
+			<defs>
+				<mask id="menu-mask">
+					<g id="mask-group">
+						<polygon id="mask-hexagon" points="1,0 0.5,0.866 -0.5,0.866 -1,0 -0.5,-0.866 0.5,-0.866" fill="white"></polygon>
+					</g>
+				</mask>
+			</defs>
+		</svg>
+		<div id="menu-bg" class="w-full h-full bg-base-600" style="mask: url(#menu-mask); -webkit-mask: url(#menu-mask);" >
+			<div id="navMenuLinks" class="w-full h-full opacity-0">
+				if len(p.Account) > 0 {
+					for _, link := range p.Account {
+						<a href={ link.URL } class="absolute px-4 py-2 text-lg font-medium transition-colors font-display text-secondary-300 hover:text-primary-400 whitespace-nowrap">{ link.Label }</a>
+					}
+				}
+				if len(p.Links) > 0 {
+					for _, link := range p.Links {
+						<a href={ link.URL } class="absolute px-4 py-2 text-lg font-medium transition-colors font-display text-secondary-300 hover:text-primary-400 whitespace-nowrap" style="transform: translate(-100%, -100%);">{ link.Label }</a>
+					}
+				}
+			</div>
+		</div>
+	</expandedNavMenu>
+}
+
 templ CTA(p *NavbarProps) {
 	<cta class="hidden whitespace-nowrap">
 		<button
-			class="px-3 py-1 text-sm font-medium transition-colors rounded cursor-pointer bg-primary-501 text-base-500"
+			class="px-8 py-2 text-sm font-medium transition-colors rounded cursor-pointer bg-primary-501 text-base-500"
 			hx-get={ p.CTA.URL }
 			tabindex="-1"
 		>
