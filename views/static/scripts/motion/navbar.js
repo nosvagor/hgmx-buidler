@@ -1,12 +1,7 @@
 import { animate, stagger } from "/static/scripts/vendor/motion.min.js";
 
-let hexagonAnimation, iconAnimation;
-
 const navMenu = document.getElementById("navMenu");
 const expandedNavMenu = document.getElementById("expandedNavMenu");
-const navMenuLinks = document.getElementById("navMenuLinks");
-const navMenuLinkItems = navMenuLinks?.querySelectorAll("a");
-const maskGroup = document.getElementById("mask-group");
 const iconP1 = document.getElementById("icon-p1");
 const iconP2 = document.getElementById("icon-p2");
 const iconP3 = document.getElementById("icon-p3");
@@ -41,15 +36,23 @@ function navbarScrolling(scrolling) {
   const telescopeTrigger = document.querySelector("telescopeTrigger");
 
   if (scrolling) {
-    animate(bookmarks, { width: 0, opacity: 0, marginLeft: 0, }, { duration: 0.75, delay: stagger(0.1, { from: "first" }), ease: "anticipate", });
-    animate(telescopeTrigger, { x: "1rem" }, { duration: 1, ease: "anticipate" });
+    animate(
+      bookmarks,
+      { width: 0, opacity: 0, marginLeft: 0 },
+      { duration: 0.75, delay: stagger(0.1, { from: "first" }), ease: "anticipate" }
+    );
+    animate(telescopeTrigger, { x: "5.25rem" }, { duration: 1, ease: "anticipate" });
     if (!navMenu.classList.contains("menu-open")) {
       setIcon(iconPaths.hamburger);
     }
   }
 
   if (!scrolling) {
-    animate(bookmarks, { width: "auto", opacity: 1, marginLeft: "0.75rem", }, { duration: 0.75, delay: stagger(0.037, { from: "last" }), ease: "backInOut", });
+    animate(
+      bookmarks,
+      { width: "auto", opacity: 1, marginLeft: "0.75rem" },
+      { duration: 0.75, delay: stagger(0.037, { from: "last" }), ease: "backInOut" }
+    );
     if (bookmarks.length > 0) {
       animate(bookmarks[0], { marginLeft: 0 });
     }
@@ -69,69 +72,66 @@ function closeMenu() {
 
 function toggleMenu() {
   const isOpen = navMenu.classList.contains("menu-open");
+  const navbar = document.querySelector("navbar");
 
-  const rect = navMenu.getBoundingClientRect();
-  const x = rect.left + rect.width / 2;
-  const y = rect.top + rect.height / 2;
-  const linkRadius = Math.min(window.innerWidth, window.innerHeight) * 0.5;
-  const scale = linkRadius * 1.25;
-
-  animate(maskGroup, { x: x, y: y }, { duration: 0 });
+  const menuBackdrop = document.getElementById("menu-backdrop");
+  const menuBg = document.getElementById("menu-bg");
+  const navLinks = menuBg?.querySelectorAll(".page-link");
+  const accountLinks = menuBg?.querySelectorAll(".account-link");
 
   if (isOpen) {
+    navbar.classList.remove("navbar_scrolling");
+    let openDelay = 0;
     if (window.scrollY == 0) {
       navbarScrolling(true);
+      openDelay = 420;
     }
-    setIcon(iconPaths.close);
-    expandedNavMenu.style.pointerEvents = "auto";
 
-    animate(maskGroup, { scale: [0, scale] }, { type: "spring", stiffness: 100, damping: 15 });
-    hexagonAnimation = animate(maskGroup, { rotate: [0, 360] }, { duration: 40, repeat: Infinity, ease: "linear" });
-    iconAnimation = animate(navMenu, { rotate: [0, -360] }, { duration: 20, repeat: Infinity, ease: "linear" });
+    setTimeout(() => {
+      setIcon(iconPaths.close);
+      expandedNavMenu.style.pointerEvents = "auto";
 
-    animate(navMenuLinks, { opacity: 1 }, { duration: 0.1 });
-    if (navMenuLinkItems) {
-      const startAngle = Math.PI * 0.6;
-      const angleRange = Math.PI * 0.3;
-      const angleStep = navMenuLinkItems.length > 1 ? angleRange / (navMenuLinkItems.length - 1) : 0;
-
-      Array.from(navMenuLinkItems).reverse().forEach((link, i) => {
-        const angle = startAngle + i * angleStep;
-        const linkX = x + linkRadius * 0.6 * Math.cos(angle);
-        const linkY = y + linkRadius * 0.6 * Math.sin(angle);
-        
+      animate(menuBackdrop, { opacity: 1 }, { duration: 0.3 });
+      animate(menuBg, { transform: "translateX(0%)" }, { type: "spring", bounce: 0.4, duration: 0.7 });
+      if (navLinks) {
         animate(
-          link,
+          navLinks,
+          { opacity: [0, 1], x: [20, 0] },
           {
-            left: [`${x}px`, `${linkX}px`],
-            top: [`${y}px`, `${linkY}px`],
-            opacity: [0, 1]
-          },
-          {
-            duration: 0.5,
-            delay: 0.2 + i * 0.05,
-            ease: "easeOut"
+            ease: "backInOut",
+            duration: 0.3,
+            delay: stagger(0.1),
           }
         );
-      });
-    }
+      }
+      if (accountLinks) {
+        animate(
+          accountLinks,
+          { opacity: [0, 1], x: [20, 0] },
+          {
+            ease: "backInOut",
+            duration: 0.3,
+            delay: stagger(0.1, { from: "last" }),
+          }
+        );
+      }
+    }, openDelay);
   }
 
   if (!isOpen) {
     if (window.scrollY == 0) {
       navbarScrolling(false);
+    } else {
+      navbar.classList.add("navbar_scrolling");
     }
     setIcon(window.scrollY > 0 ? iconPaths.hamburger : iconPaths.avatar);
     expandedNavMenu.style.pointerEvents = "none";
 
-    if (hexagonAnimation) hexagonAnimation.stop();
-    if (iconAnimation) iconAnimation.stop();
-
-    animate(maskGroup, { scale: 0, rotate: 0 }, { type: "spring", stiffness: 100, damping: 15 });
-    animate(navMenu, { rotate: 0 }, { type: "spring", stiffness: 100, damping: 15 });
-    animate(navMenuLinks, { opacity: 0 }, { duration: 0.2, delay: 0.2 });
-    if (navMenuLinkItems) {
-      animate(navMenuLinkItems, { opacity: 0 }, { duration: 0.1 });
+    animate(navMenu, { rotate: 0 }, { ease: "easeOut", duration: 0.3 });
+    animate(menuBackdrop, { opacity: 0 }, { duration: 0.3, delay: 0.1 });
+    animate(menuBg, { transform: "translateX(100%)" }, { type: "spring" });
+    if (navLinks) {
+      animate(navLinks, { opacity: 0, x: 20 }, { ease: "easeOut", duration: 0.2, delay: stagger(0.08) });
     }
   }
 }

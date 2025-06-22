@@ -12,18 +12,17 @@ func NewNavbar(c echo.Context) *navigation.NavbarProps {
 		Links: []navigation.PageLink{
 			{Label: "Docs", URL: "/docs"},
 			{Label: "Palette", URL: "/palette"},
-			{Label: "Showcase", URL: "/showcase"},
 			{Label: "Blog", URL: "/blog"},
 		},
+
 		CTA: &navigation.PageLink{
 			Label: "Download",
 			URL:   "/download",
 		},
 		Account: []navigation.PageLink{
 			{Label: "Profile", URL: "/profile"},
-			{Label: "Billing", URL: "/billing"},
+			{Label: "Account", URL: "/account"},
 			{Label: "Settings", URL: "/settings"},
-			{Label: "Sign out", URL: "/signout"},
 		},
 	}
 }
