@@ -75,7 +75,7 @@ templ TelescopeTrigger(p *NavbarProps) {
 		type="button"
 		role="button"
 		tabindex="0"
-		class="items-center flex justify-between w-20 pl-2 pr-4 py-1 text-xs rounded-lg transition-colors outline-none cursor-pointer bg-base-600 text-secondary-601 hover:text-primary-401"
+		class="items-center flex justify-between w-20 pl-2 pr-6 py-1 text-xs rounded-lg transition-colors outline-none cursor-pointer bg-base-600 text-secondary-601 hover:text-primary-401"
 		_="
 			on click
 				halt the event
@@ -83,7 +83,7 @@ templ TelescopeTrigger(p *NavbarProps) {
 			end
 		"
 	>
-		<svg class="w-4 h-4 mr-1.5" viewBox="0 0 24 24" fill="currentColor">
+		<svg class="min-w-4 h-4 mr-1.5" viewBox="0 0 24 24" fill="currentColor">
 			<rect x="6" y="9" width="8" height="4" rx="1" transform="rotate(-25 10 11)"></rect>
 			<rect x="2" y="12.5" width="3" height="3" rx="1" transform="rotate(-25 3.5 13)"></rect>
 			<rect x="15" y="5" width="4" height="6" rx="2" transform="rotate(-25 17 9)"></rect>
@@ -91,12 +91,13 @@ templ TelescopeTrigger(p *NavbarProps) {
 			<rect x="13" y="13" width="1.5" height="7" rx="0.75" transform="rotate(-20 13.75 17)"></rect>
 		</svg>
 		<kbd
+			class="text-[0.8em]"
 			_="
-				on load
+				init
 					if navigator.platform.toUpperCase().indexOf('MAC') >= 0
-						set my.textContent to 'Ctrl+K'
+						put '⌘K' into me
 					else
-						set my.textContent to '⌘K'
+						put 'Ctrl+K' into me
 					end
 				end
 				on click
